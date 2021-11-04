@@ -18,7 +18,8 @@ int main(int argc, char** argv)
 {
     int fd,c, res;
     struct termios oldtio,newtio;
-    char buf[255];
+    int size = 255;
+    char buf[size];
     int i, sum = 0, speed = 0;
 
     printf("%s\n",argv[1]);
@@ -72,30 +73,45 @@ int main(int argc, char** argv)
       exit(-1);
     }
 
-    int size = 255;
 
     printf("New termios structure set\n");
 
-    buf[25] = '\n';
+    gets(buf);
+
+    size = strlen(buf);
+
+    buf[25] = '\0';
+
+
 
 
     for (i = 0; i < size; i++)
      {
 
-        if(buf[i] == '\n')
+        if(buf[i] == '\0')
         {
-          size = i;
+          buf[i] = '\0';
+          size = i+1;
           break;
         }
-    buf[i] = 'a';
-
     }
 
     /*testing*/
 
     res = write(fd,buf,size);
+
     printf("%d bytes written\n", res);
 
+    while (STOP==FALSE) {       /* loop for input */
+
+      res = read(fd,buf,255);   /* returns after 5 chars have been input */
+            /* so we can printf... */
+      printf(":%s:%d\n", buf, res);
+
+      if (buf[res]=='\0')
+      { STOP=TRUE;
+      }
+    };   /* returns after 5 chars have been input */
 
   /*
     O ciclo FOR e as instru��es seguintes devem ser alterados de modo a respeitar
